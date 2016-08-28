@@ -1,50 +1,54 @@
-var input = document.getElementById('input');
-var button = document.getElementById('btn');
+'use strict';
+var input = $('#input');
 
-//this function will make sure that the input element is empty
-//when the document loads or refreshes
-(function Ready() {
-  'use strict';
-  input.value = "";
-}());
+ClearInput();
+BindEvents();
 
-function CreateList(){
-  var cont = document.getElementById('contents');
+function CreateListElements(){
+    //Get the contents element
+    var contEl = $("#contents");
 
-  //create an paragraph element
-  var p = document.createElement('p');
+    //create the list item.
+    var newDivEl = document.createElement('div');
+    var paraEl = document.createElement('p');
+    var btnEl = document.createElement('button');
 
-  var newDiv = document.createElement('div');
-  newDiv.className = "item";
+    $(newDivEl).addClass('item');
+    $(btnEl).text('X').addClass('rBtn').attr('type', 'button').attr('name', 'removeButton');
 
-  var removeBtn = document.createElement('button');
-  removeBtn.textContent = "X";
-  removeBtn.type = "button";
-  removeBtn.name = "removeButton";
-  removeBtn.className = "rBtn";
+    if(GetInput() !== ""){
 
-  if(input.value !== ""){
-    p.textContent = input.value;
-
-    newDiv.appendChild(p);
-    newDiv.appendChild(removeBtn);
-    cont.appendChild(newDiv);
-
-    //clear input field
-    input.value = "";
-  }
-  else {
-    alert("Error, nothing in text field");
-  }
-
-  var deleteItem = document.getElementsByClassName('rBtn');
-
-  for (var i = 0; i < deleteItem.length; i++) {
-  deleteItem[i].addEventListener('click', removeItems, false);
-  }
+        $(paraEl).text(GetInput());
+        $(newDivEl).append(paraEl).append(btnEl);
+        $(contEl).append(newDivEl);
+        ClearInput();
+    }else{
+        alert("Error, nothing in text field");
+    }
+    for (var index = 0; index < $('.rBtn').length; index++) {
+        $('.rBtn').click(RemoveItems);
+    }
 }
-button.addEventListener('click', CreateList, false);
 
-function removeItems(){
-  this.parentElement.remove(this);
+function GetInput(){
+    return $(input).val();
+}
+
+function ClearInput(){
+    $(input).val(null);
+}
+
+function RemoveItems(){
+    this.parentElement.remove(this);
+}
+
+function BindEvents(){
+    $('#btn').click(CreateListElements);
+
+    $(input).keydown(function(e){
+        //If the enter key is pressed
+        if(e.keyCode === 13){
+            CreateListElements();
+        }
+    })
 }
